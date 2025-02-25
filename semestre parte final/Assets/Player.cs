@@ -2,70 +2,48 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class Camera : MonoBehaviour
 {
-    public float velocidade = 10f;
-    public float focaPulo = 10f;
+    public Transform _alvo1;
+    public Transform _alvo2;
 
-    public bool noChao = false;
-  
-
-    private Rigidbody2D _rigidbody2D;
-    private SpriteRenderer  spriteRenderer; 
-
+    public float interpolacao = 12f;
+    public SpriteRenderer _spriteRenderrer;
+    
+    public float CamMoveSpeed = 5f;
+    
     // Start is called before the first frame update
     void Start()
     {
-        _rigidbody2D = gameObject.GetComponent<Rigidbody2D>();
-        spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
-    }
-
-
-    void OnCollisionStay2D(Collision2D collision)
-    {
-        if (collision.gameObject.tag == "chao")
-        {
-            noChao = true;
-        }
-    }
-
-    void OnCollisionExit2D(Collision2D collision)
-    {
-        if (collision.gameObject.tag == "chao")
-        {
-            noChao = false;
-        }
+        
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKey(KeyCode.LeftArrow))
+        if (_spriteRenderrer.flipX == true)
         {
-            gameObject.transform.position += new Vector3(-velocidade*Time.deltaTime,0,0);
-            //rigidbody2D.AddForce(new Vector2(-velocidade,0));
-            spriteRenderer.flipX = true;
-            Debug.Log("LeftArrow");
+            //transform.position = new Vector3(_alvo2.position.x, _alvo2.position.y, transform.position.z);
+            
+            transform.position = Vector3.Lerp(
+                transform.position, 
+                new Vector3(_alvo2.position.x,_alvo2.position.y,transform.position.z), 
+                CamMoveSpeed * Time.deltaTime);
+            
+
+        }
+        if (_spriteRenderrer.flipX == false)
+        {
+            //transform.position = new Vector3(_alvo1.position.x, _alvo1.position.y, transform.position.z);
+           
+            transform.position = Vector3.Lerp(
+                transform.position, 
+                new Vector3(_alvo1.position.x,_alvo1.position.y,transform.position.z), 
+                CamMoveSpeed * Time.deltaTime);
+            
         }
         
-
-        if(Input.GetKey(KeyCode.RightArrow))
-        {
-            gameObject.transform.position += new Vector3(velocidade*Time.deltaTime,0,0);
-            //rigidbody2D.AddForce(new Vector2(velocidade,0));
-            spriteRenderer.flipX = false;
-            Debug.Log("RightArrow");
-        }
-
-        if (Input.GetKeyDown(KeyCode.Space) && noChao == true)
-        {
-            _rigidbody2D.AddForce(new Vector2(0, 1) * focaPulo,ForceMode2D.Impulse);
-
-            Debug.Log("Jump");
-        }
-
-     
-
-
+        
+        
     }
 }
